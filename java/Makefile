@@ -1,5 +1,5 @@
 # Variables
-SRC_DIR = src/main/java
+SRC_DIR = com/craftinginterpreters/lox
 OUT_DIR = out
 
 # Default target
@@ -12,7 +12,7 @@ compile:
 
 # Run the program
 run:
-	java -cp $(OUT_DIR) Main
+	java -cp $(OUT_DIR) 
 
 # Clean up compiled files
 clean:
