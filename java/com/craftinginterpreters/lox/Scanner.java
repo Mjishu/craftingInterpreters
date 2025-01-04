@@ -76,7 +76,14 @@ class Scanner {
                         break;
                   case '/':
                         if (match('/')) {
-                              while (peek() != '\n' && isAtEnd())
+                              while (peek() != '\n' && !isAtEnd())
+                                    advance();
+                        } else if (match('*')) { //CHECK THIS not sure if this works?
+                              // should properly check for /* but not sure if it checks for */
+                              while (peek() != '*\' && !isAtEnd())
+                                    if (peek() == '\n') {
+                                          lines++;
+                                    }
                                     advance();
                         } else {
                               addToken(SLASH);
