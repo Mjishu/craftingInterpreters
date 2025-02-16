@@ -14,7 +14,7 @@ class Scanner {
       private int current = 0;
       private int line = 1;
 
-      private static final Map<String, TokenType>keywords;
+      private static final Map<String, TokenType> keywords;
 
       Scanner(String source) {
             this.source = source;
@@ -78,13 +78,13 @@ class Scanner {
                         if (match('/')) {
                               while (peek() != '\n' && !isAtEnd())
                                     advance();
-                        } else if (match('*')) { //CHECK THIS not sure if this works?
+                        } else if (match('*')) { // CHECK THIS not sure if this works?
                               // should properly check for /* but not sure if it checks for */
-                              while (peek() != '*\' && !isAtEnd())
+                              while (peek() != '*' && peekNext() != '/' && !isAtEnd())
                                     if (peek() == '\n') {
-                                          lines++;
+                                          line++;
                                     }
-                                    advance();
+                              advance();
                         } else {
                               addToken(SLASH);
                         }
@@ -98,7 +98,9 @@ class Scanner {
                   case '\n':
                         line++;
                         break;
-                  case '"': string(); break;
+                  case '"':
+                        string();
+                        break;
                   default:
                         if (isDigit(c)) {
                               number();
@@ -112,24 +114,28 @@ class Scanner {
       }
 
       private void identifier() {
-            while (isAlphaNumberic(peek())) advance();
+            while (isAlphaNumeric(peek()))
+                  advance();
 
-            String text = source.substring(start,current);
+            String text = source.substring(start, current);
             TokenType type = keywords.get(text);
-            if (type == null) type = IDENTIFIER;
+            if (type == null)
+                  type = IDENTIFIER;
             addToken(type);
       }
 
       private void number() {
-            while (isDigit(peek())) advance();
+            while (isDigit(peek()))
+                  advance();
 
             if (peek() == '.' && isDigit(peekNext())) {
                   advance();
 
-                  while (isDigit(peek())) advnace();
-            } 
+                  while (isDigit(peek()))
+                        advance();
+            }
 
-            addToken(NUMBER, Double.parseDouble(source.substring(start,current)));
+            addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
       }
 
       private boolean match(char expected) {
@@ -143,7 +149,7 @@ class Scanner {
       }
 
       private void string() {
-            while(peek() != '"' && !isAtEnd()) {
+            while (peek() != '"' && !isAtEnd()) {
                   advance();
             }
 
@@ -166,16 +172,17 @@ class Scanner {
       }
 
       private char peekNext() {
-            if (current + 1 >= source.length()) retunr '\0';
+            if (current + 1 >= source.length())
+                  return '\0';
             return source.charAt(current + 1);
       }
 
       private boolean isAlpha(char c) {
-            return (c > 'a' && c <= 'Z') || (c >='A' && c <= 'Z') || c == '_';
+            return (c > 'a' && c <= 'Z') || (c >= 'A' && c <= 'Z') || c == '_';
       }
 
       private boolean isAlphaNumeric(char c) {
-            return isAlpha(c) !! isDigit(c)
+            return isAlpha(c) || isDigit(c);
       }
 
       private boolean isDigit(char c) {
@@ -190,7 +197,7 @@ class Scanner {
             return source.charAt(current++);
       }
 
-      private void addToken(TokenType type) { //redundant?
+      private void addToken(TokenType type) { // redundant?
             addToken(type, null);
       }
 
@@ -200,7 +207,7 @@ class Scanner {
       }
 
       static {
-            keywords = new HashMap<> ();
+            keywords = new HashMap<>();
             keywords.put("and", AND);
             keywords.put("class", CLASS);
             keywords.put("else", ELSE);
@@ -210,13 +217,13 @@ class Scanner {
             keywords.put("if", IF);
             keywords.put("nil", NIL);
             keywords.put("or", OR);
-            keywords.put("print",  PRINT);
+            keywords.put("print", PRINT);
             keywords.put("return", RETURN);
-            keywords.put("super",  SUPER);
-            keywords.put("this",   THIS);
-            keywords.put("true",   TRUE);
-            keywords.put("var",    VAR);
-            keywords.put("while",  WHILE);
+            keywords.put("super", SUPER);
+            keywords.put("this", THIS);
+            keywords.put("true", TRUE);
+            keywords.put("var", VAR);
+            keywords.put("while", WHILE);
       }
 
 }
